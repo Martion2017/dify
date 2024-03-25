@@ -18,6 +18,8 @@ import { InputVarType, type NodePanelProps } from '@/app/components/workflow/typ
 import BeforeRunForm from '@/app/components/workflow/nodes/_base/components/before-run-form'
 import type { Props as FormProps } from '@/app/components/workflow/nodes/_base/components/before-run-form/form'
 import ResultPanel from '@/app/components/workflow/run/result-panel'
+import TooltipPlus from '@/app/components/base/tooltip-plus'
+import { HelpCircle } from '@/app/components/base/icons/src/vender/line/general'
 
 const i18nPrefix = 'workflow.nodes.llm'
 
@@ -178,37 +180,55 @@ const Panel: FC<NodePanelProps<LLMNodeType>> = ({
           />
         )}
 
-        {/* Memory examples. Wait for design */}
-        {/* {isChatModel && (
-          <div className='text-xs text-gray-300'>Memory examples(Designing)</div>
-        )} */}
+        {/* Memory put place examples. */}
+        {isChatMode && isChatModel && !!inputs.memory && (
+          <div className='mt-4'>
+            <div className='flex justify-between items-center h-8 pl-3 pr-2 rounded-lg bg-gray-100'>
+              <div className='flex items-center space-x-1'>
+                <div className='text-xs font-semibold text-gray-700 uppercase'>{t('workflow.nodes.common.memories.title')}</div>
+                <TooltipPlus
+                  popupContent={t('workflow.nodes.common.memories.tip')}
+                >
+                  <HelpCircle className='w-3.5 h-3.5 text-gray-400' />
+                </TooltipPlus>
+              </div>
+              <div className='h-[18px] leading-[18px] px-1 rounded-[5px] border border-black/8 text-xs font-semibold text-gray-500 uppercase'>{t('workflow.nodes.common.memories.builtIn')}</div>
+            </div>
+            {/* TODO: user query editor */}
+          </div>
+        )}
+
         {/* Memory */}
-        {isChatMode && (
+        {isChatMode && isChatModel && (
           <>
+            <Split />
             <MemoryConfig
               readonly={readOnly}
               config={{ data: inputs.memory }}
               onChange={handleMemoryChange}
               canSetRoleName={isCompletionModel}
             />
-            <Split />
           </>
         )}
 
         {/* Vision: GPT4-vision and so on */}
         {isShowVisionConfig && (
-          <Field
-            title={t(`${i18nPrefix}.vision`)}
-            tooltip={t('appDebug.vision.description')!}
-            operations={
-              <ResolutionPicker
-                value={inputs.vision.configs?.detail || Resolution.high}
-                onChange={handleVisionResolutionChange}
-              />
-            }
-          />
+          <>
+            <Split />
+            <Field
+              title={t(`${i18nPrefix}.vision`)}
+              tooltip={t('appDebug.vision.description')!}
+              operations={
+                <ResolutionPicker
+                  value={inputs.vision.configs?.detail || Resolution.high}
+                  onChange={handleVisionResolutionChange}
+                />
+              }
+            />
+          </>
         )}
       </div>
+      <Split />
       <div className='px-4 pt-4 pb-2'>
         <OutputVars>
           <>
